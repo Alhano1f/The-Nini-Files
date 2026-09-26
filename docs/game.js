@@ -936,6 +936,7 @@ function renderDoor() {
 }
 
 function renderEnding() {
+  window.NiniGift?.preload();
   app.innerHTML = `<section class="ending">
     <p class="eyebrow">CASE CLOSED / SURPRISE!</p>
     <img class="cakeArt" src="final-cake.png" alt="A pixel-art birthday cake with candles">
@@ -946,6 +947,7 @@ function renderEnding() {
     <p class="fine">Nini has been cleared of all charges. Except being the real boss.</p>
     <div class="endingActions">
       <button class="quiet" type="button" data-action="birthday-song" data-testid="button-birthday-song">♪ Play the birthday song</button>
+      <button class="secondary giftButton" type="button" data-action="special-gift" data-testid="button-extra-gift">🎁 Extra gift</button>
       <button class="primary" type="button" data-action="restart" data-testid="button-play-again">Play again</button>
     </div>
   </section>`;
@@ -1621,6 +1623,10 @@ function handleAction(actionName) {
       scrollToTop();
       window.NiniCelebrate?.confetti();
       if (soundOn || voiceOn) setTimeout(() => window.NiniCelebrate?.song(), 900);
+      break;
+    case 'special-gift':
+      voiceCast?.stop();
+      window.NiniGift?.start();
       break;
     case 'birthday-song':
       window.NiniCelebrate?.song();
