@@ -67,7 +67,7 @@
       setMessage('idle', message || 'Playback complete. Choose a voice to replay.');
     } else if (kind === 'error') {
       activeId = null;
-      setMessage('error', message || 'The voice could not be played. Check your device volume, then try again.');
+      setMessage('error', message || 'The voice could not be played. Check your connection or Puter sign-in, then try again.');
     } else if (kind === 'loading' || kind === 'playing') {
       const name = activeId !== null && buttons.has(activeId) ? buttons.get(activeId).dataset.name : 'Voice';
       setMessage(kind, message || (kind === 'loading' ? 'Preparing ' + name + "'s voice…" : 'Playing ' + name + "'s voice."));
@@ -141,7 +141,7 @@
     identity.append(element('h3', '', profile.name));
     identity.append(element('span', 'voice-card-role', profile.role || 'Court witness'));
     identity.append(element('span', 'voice-card-model',
-      profile.id === 'gojo' ? 'BROWSER VOICE · JAPANESE WHEN AVAILABLE' : 'BROWSER VOICE'));
+      profile.id === 'gojo' ? profile.voice + ' · JAPANESE NEURAL (PUTER)' : profile.voice + ' · ' + profile.provider.toUpperCase() + ' (PUTER)'));
     card.append(identity);
 
     card.append(element('p', 'voice-card-direction', profile.direction || ''));

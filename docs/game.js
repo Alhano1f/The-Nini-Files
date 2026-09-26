@@ -1685,7 +1685,7 @@ document.querySelector('#sound').onclick = () => {
 
 const voiceButton = document.querySelector('#voice');
 const voiceStatus = document.querySelector('#voiceStatus');
-const voiceNote = 'Nini uses local cat sounds. Other characters use your browser’s built-in voices, so they sound different on each device.';
+const voiceNote = 'Nini uses local cat sounds. Other characters use Puter AI voices (you may be asked to sign in to Puter). If Puter is unavailable, your browser’s built-in voices take over.';
 voiceButton.disabled = !voiceCast;
 voiceButton.textContent = voiceCast ? 'Voices off' : 'Voices unavailable';
 voiceButton.title = voiceNote;
@@ -1700,7 +1700,7 @@ voiceButton.onclick = () => {
   voiceButton.textContent = voiceOn ? 'Voices on' : 'Voices off';
   voiceButton.setAttribute('aria-pressed', String(voiceOn));
   voiceStatus.textContent = voiceOn
-    ? (voiceCast.isAvailable() ? voiceNote : 'This browser has no built-in voices; Nini’s cat sounds still work.')
+    ? (voiceCast.isAvailable() ? voiceNote : 'Voices are unavailable in this browser; Nini’s cat sounds still work.')
     : '';
   document.querySelectorAll('[data-action="hear-interruption"], [data-action="hear-japanese"]').forEach((button) => {
     button.disabled = !voiceOn;
