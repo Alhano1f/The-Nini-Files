@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102c34">
+  <meta name="description" content="Audition the synthetic character voices of The Nini Files, one witness at a time.">
+  <title>Voice Room | The Nini Files</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="voices.css">
+</head>
+<body>
+  <header>
+    <a class="brand" href="index.html" aria-label="The Nini Files home" data-testid="link-home-brand">N<span>THE NINI FILES<small>COURT OF CURIOUS AFFAIRS</small></span></a>
+    <div class="headerRight">
+      <span class="caseNo">CASE № 001 / AUDIO</span>
+      <a class="quiet voice-header-link" href="index.html" data-testid="link-return-case">← Return to case</a>
+    </div>
+  </header>
+  <main class="voice-page">
+    <section class="voice-hero" aria-labelledby="voice-title">
+      <div class="voice-hero-copy">
+        <span class="tag">THE NINI FILES / CAST RECORD</span>
+        <p class="eyebrow">AUDIO EVIDENCE · FILE 08</p>
+        <h1 id="voice-title">The voice <em>room.</em></h1>
+        <p class="lead">Every witness has a story. Now hear how they tell it. Audition the cast, one voice at a time.</p>
+      </div>
+      <div class="voice-hero-art" role="img" aria-label="Pixel art of the courtroom where the cast gives testimony">
+        <div class="voice-hero-caption">
+          <strong>The court is listening.</strong>
+          <span>SELECT A WITNESS BELOW</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="voice-instructions" aria-labelledby="audition-title">
+      <div>
+        <p class="eyebrow">01 / THE AUDITIONS</p>
+        <h2 id="audition-title">Call the next witness.</h2>
+        <p>Choose a character to hear their sample line. Choosing another voice stops the previous one. You can stop a line at any time, then replay it.</p>
+      </div>
+      <aside class="voice-notice" aria-label="About these voices">
+        <b>BEFORE YOU LISTEN</b>
+        <p>These are synthetic character voices, not recordings or clones of real people. Nini uses local cat sounds in the case and has no synthetic audition voice. Voices come from your browser, so they are free and sound different on each device.</p>
+      </aside>
+    </section>
+
+    <div class="voice-status-bar" id="voiceStatusBar" data-state="idle">
+      <div class="voice-status-meta">
+        <span class="voice-status-light" aria-hidden="true"></span>
+        <div>
+          <span class="voice-status-label">PLAYBACK STATUS</span>
+          <span class="voice-status-text" id="voiceStatus" role="status" aria-live="polite" aria-atomic="true" data-testid="status-playback">Ready to audition.</span>
+        </div>
+      </div>
+      <button class="quiet voice-stop" id="stopVoice" type="button" hidden data-testid="button-stop-playback">Stop playback</button>
+    </div>
+    <div id="voiceError" role="alert" hidden data-testid="status-voice-error"></div>
+    <section id="voiceList" class="voice-list" aria-label="Character voice auditions" aria-busy="true">
+      <div class="voice-empty">Opening the cast record…</div>
+    </section>
+
+    <footer class="voice-footer">
+      <p>COURT OF CURIOUS AFFAIRS <span aria-hidden="true">/</span> CASE № 001</p>
+      <a href="index.html" data-testid="link-return-case-footer">Return to the case →</a>
+    </footer>
+  </main>
+
+  <script src="voice-cast.js"></script>
+  <script src="voices-page.js"></script>
+</body>
+</html>
