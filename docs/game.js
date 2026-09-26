@@ -1685,7 +1685,7 @@ document.querySelector('#sound').onclick = () => {
 
 const voiceButton = document.querySelector('#voice');
 const voiceStatus = document.querySelector('#voiceStatus');
-const voiceNote = 'Nini uses local cat sounds. Other characters use Puter AI voices (you may be asked to sign in to Puter). If Puter is unavailable, your browser’s built-in voices take over.';
+const voiceNote = 'Nini uses local cat sounds. Every other character has their own recorded synthetic voice.';
 voiceButton.disabled = !voiceCast;
 voiceButton.textContent = voiceCast ? 'Voices off' : 'Voices unavailable';
 voiceButton.title = voiceNote;

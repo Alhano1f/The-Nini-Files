@@ -117,34 +117,15 @@
   let report = () => {};
   const synth = window.speechSynthesis;
 
-  // Puter voices are used first. If a Puter request fails (not signed in, no
-  // allowance, network), the rest of the session falls back to the browser's
-  // built-in voices so the game never goes silent or keeps prompting.
-  let puterFailed = false;
+  // Every character line has a pre-generated clip in voices/ (see voice-manifest.js).
+  // The browser's built-in speech is only a fallback for lines without a clip.
 
   function hasBrowserVoices() {
     return !!synth && typeof window.SpeechSynthesisUtterance === 'function';
   }
 
-  function hasPuter() {
-    return !puterFailed && typeof window.puter?.ai?.txt2speech === 'function';
-  }
-
   function isAvailable() {
-    return hasPuter() || hasBrowserVoices();
-  }
-
-  function usingPuter() { return hasPuter(); }
-
-  function japaneseSSML(text, moment) {
-    const cadence = {
-      opening: ['98%', '120ms'], testimony: ['94%', '140ms'], pressed: ['103%', '100ms'],
-      admission: ['91%', '260ms'], translation: ['96%', '180ms'],
-    };
-    const [rate, pause] = cadence[moment] || cadence.testimony;
-    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
-    return `<speak><prosody rate="${rate}">${escaped.replace('。', `。<break time="${pause}"/>`)}</prosody></speak>`;
+    return typeof window.Audio === 'function' || hasBrowserVoices();
   }
 
   const femaleHints = /female|woman|samantha|victoria|karen|moira|tessa|fiona|zira|susan|hazel|serena|allison|ava|kate|libby|sonia|aria|jenny|google uk english female|google us english/i;
@@ -255,25 +236,13 @@
     synth.speak(utterance);
   }
 
-  async function speakWithPuter(line, profile, ticket) {
-    const spokenText = line.spokenText || (profile.id === 'gojo' ? japaneseDialogue.get(line.text) : line.text);
-    if (!spokenText) throw new Error('No Japanese line for this subtitle');
-    const options = profile.provider === 'aws-polly'
-      ? { provider: profile.provider, voice: profile.voice, engine: profile.engine, language: profile.language, ssml: true }
-      : {
-        provider: profile.provider,
-        model: 'gpt-4o-mini-tts',
-        voice: profile.voice,
-        instructions: [
-          profile.direction,
-          profile.performance?.[line.moment] || profile.performance?.opening || '',
-          'Vary the rhythm and stress naturally. Speak only the supplied dialogue; do not add or omit words or read these directions aloud.',
-        ].filter(Boolean).join(' '),
-      };
-    const clip = await window.puter.ai.txt2speech(
-      profile.provider === 'aws-polly' ? japaneseSSML(spokenText, line.moment) : spokenText, options);
-    if (!clip || typeof clip.play !== 'function') throw new Error('Puter returned no audio');
-    if (ticket !== generation) { release(clip); return; }
+  function localClip(line, profile) {
+    const file = window.NiniVoiceManifest?.[`${profile.id}|${line.text}`];
+    return file ? new URL(`voices/${file}`, document.baseURI).href : null;
+  }
+
+  async function speakLocal(src, profile, ticket) {
+    const clip = new Audio(src);
     audio = clip;
     clip.onended = () => {
       release(clip);
@@ -306,22 +275,25 @@
       return;
     }
     const ticket = generation;
-    const viaPuter = hasPuter();
-    report('loading', viaPuter ? `Generating ${profile.name}’s voice…` : `Preparing ${profile.name}’s voice…`);
+    const src = localClip(line, profile);
+    report('loading', `Loading ${profile.name}’s voice…`);
     pending = setTimeout(async () => {
       pending = undefined;
       if (ticket !== generation) return;
-      if (!viaPuter) { speakWithBrowser(line, profile, ticket); return; }
+      if (!src) { speakWithBrowser(line, profile, ticket); return; }
       try {
-        await speakWithPuter(line, profile, ticket);
+        await speakLocal(src, profile, ticket);
       } catch (error) {
         if (ticket !== generation) return;
-        console.warn('Puter voice failed; switching to browser voices for this session:', error);
-        puterFailed = true;
         if (audio) { release(audio); audio = null; }
+        if (error?.name === 'NotAllowedError') {
+          report('error', 'Tap anywhere, then try again: the browser blocked audio.');
+          return;
+        }
+        console.warn('Local voice failed; using a browser voice instead:', error);
         speakWithBrowser(line, profile, ticket);
       }
-    }, 100);
+    }, 60);
   }
 
   // Some browsers load their voice list asynchronously.
@@ -333,7 +305,6 @@
   window.NiniVoiceCast = {
     profiles,
     isAvailable,
-    usingPuter,
     setStatus(callback) { report = callback; },
     speak,
     stop,
