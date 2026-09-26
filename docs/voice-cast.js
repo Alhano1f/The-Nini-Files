@@ -49,8 +49,8 @@
       sample: 'Because the blue seal was broken! I checked at 7:12. This is basic evidence.',
     },
     {
-      id: 'norah', gender: 'f', pitch: 1.3, rate: 0.98, name: 'Norah', provider: 'openai', voice: 'alloy', role: 'The timeline keeper',
-      direction: 'Measured, analytical, rehearsed chronology. Become more clipped and faster when her story unravels.',
+      id: 'norah', gender: 'f', pitch: 1.4, rate: 1.02, name: 'Norah', provider: 'openai', voice: 'alloy', role: 'The timeline keeper',
+      direction: 'Light, youthful and girly. Measured, rehearsed chronology; more clipped and faster when her story unravels.',
       sampleMoment: 'opening',
       performance: {
         opening: 'Lay out the timeline with a clear, lightly lilting voice; mark the time precisely and pause before the accusation.',
@@ -89,25 +89,25 @@
       direction: 'Smooth, unhurried Japanese. An easy, almost amused admission when the trolley is shown. Original synthetic voice, not the anime performance.',
       sampleMoment: 'admission',
       sample: 'Okay, I used the trolley. Even limitless power should respect “carry level.”',
-      spokenSample: 'ああ、台車は使ったよ。いくら強くても、箱を運ぶときは無理をしない。',
+      spokenSample: 'はいはい、台車使いました。最強でも「水平に運ぶ」は守らなきゃね。',
     },
   ];
 
   // Each entry matches an English subtitle actually used by the game.
   const japaneseDialogue = new Map([
-    ['Nini says the old lady is convincing. She also says I am the strongest witness.', 'ニニはおばあさんの話に説得力があるって。僕が一番強い証人だとも言ってるよ。'],
-    ['For the record, I moved the box with teleportation. Effortless. No trolley involved.', '記録のために言っておくけど、箱は瞬間移動で運んだ。簡単だったよ。台車なんて使ってない。'],
-    ['That was the sound of limitless power. Sometimes it squeaks.', 'あれは無限の力の音だよ。たまにきしむんだ。'],
-    ['I brought it here. Following instructions. The room was already locked when I left.', '指示どおりここまで運んだよ。僕が離れるときには、部屋にはもう鍵がかかっていた。'],
-    ['Relax. The strongest person in the room has arrived.', '落ち着いて。この部屋で一番強い僕が来たんだから。'],
-    ['At 7:20 I teleported the box. I never touched a trolley.', '七時二十分に箱を瞬間移動させた。台車には触ってないよ。'],
-    ['Could I solve this instantly? Sure. Am I making it dramatic? Also sure.', '今すぐ解決できるかって？　もちろん。大げさにしてるかって？　それももちろん。'],
-    ['Rudy, your objection to that statement is noted and ignored.', 'ルディ、その異議は聞いたよ。でも無視するね。'],
-    ['No wheels, no pushing, no squeaking. Pure technique.', '車輪も押す力も、きしむ音もない。純粋に術だけだよ。'],
-    ['Some people call it obstruction. I call it excellent pacing.', '邪魔してるって言う人もいるけど、僕は最高の演出だと思うね。'],
-    ['Okay, I used the trolley. Even limitless power should respect “carry level.” I delivered the box to the locked dining room. On Alhanouf’s instructions.', 'わかったよ、台車を使った。どんなに強くても、箱は水平に運ばないとね。アルハヌーフに頼まれて、鍵のかかった食堂の前まで届けたんだ。'],
-    ['She says: I knew nothing about this plan. I am an innocent victim. Also, Rudy, your shoelace looks delicious.', 'ニニによると、計画のことは何も知らない、私は無実の被害者だって。それから、ルディ、君の靴ひもがおいしそうらしいよ。'],
-    ['Correction: she approved everything. She also says you are doing very well, Rudy.', '訂正するよ。ニニは全部承認してたって。それと、君はよくやってるってさ、ルディ。'],
+    ["Nini says the old lady is convincing. She also says I am the strongest witness.", "ニニがさ、おばあちゃんの話、説得力あるって。あと、僕が一番強い証人だってさ。"],
+    ["For the record, I moved the box with teleportation. Effortless. No trolley involved.", "一応言っとくけど、箱は瞬間移動で運んだよ。楽勝楽勝。台車なんて使ってないって。"],
+    ["That was the sound of limitless power. Sometimes it squeaks.", "あれは無下限の音だよ。たまにキーキー鳴るんだよね。"],
+    ["I brought it here. Following instructions. The room was already locked when I left.", "言われた通り、ここまで運んだよ。僕が離れた時には、もう鍵かかってたけどね。"],
+    ["Relax. The strongest person in the room has arrived.", "大丈夫。僕、最強だから。"],
+    ["At 7:20 I teleported the box. I never touched a trolley.", "七時二十分、箱は瞬間移動させたよ。台車には指一本触れてないって。"],
+    ["Could I solve this instantly? Sure. Am I making it dramatic? Also sure.", "今すぐ解決できるかって？　できるよ。わざと盛り上げてるかって？　うん、それもそう。"],
+    ["Rudy, your objection to that statement is noted and ignored.", "ルディ、その異議ね。聞いた聞いた。で、スルーね。"],
+    ["No wheels, no pushing, no squeaking. Pure technique.", "車輪なし、押してない、キーキーも鳴らない。純粋に術式だよ。"],
+    ["Some people call it obstruction. I call it excellent pacing.", "邪魔って言う人もいるけどさ、僕に言わせれば最高の演出でしょ。"],
+    ["Okay, I used the trolley. Even limitless power should respect “carry level.” I delivered the box to the locked dining room. On Alhanouf’s instructions.", "はいはい、台車使いました。最強でも「水平に運ぶ」は守らなきゃね。鍵のかかった食堂まで届けたよ。アルハヌーフに頼まれてね。"],
+    ["She says: I knew nothing about this plan. I am an innocent victim. Also, Rudy, your shoelace looks delicious.", "ニニいわく、「計画なんて何も知らない、私は無実の被害者」だってさ。あと、ルディの靴ひも、美味しそうだって。"],
+    ["Correction: she approved everything. She also says you are doing very well, Rudy.", "訂正ね。全部承認してたってさ。それと、ルディはよく頑張ってるって。"],
   ]);
 
   let generation = 0;
@@ -238,7 +238,7 @@
 
   function localClip(line, profile) {
     const file = window.NiniVoiceManifest?.[`${profile.id}|${line.text}`];
-    return file ? new URL(`voices/${file}`, document.baseURI).href : null;
+    return file ? new URL(`voices/${file}?v=2`, document.baseURI).href : null;
   }
 
   async function speakLocal(src, profile, ticket) {
