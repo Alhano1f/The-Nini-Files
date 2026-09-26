@@ -56,7 +56,8 @@
       </div>
       <img class="giftPeek" src="${art.peek}" alt="" aria-hidden="true">
       <div class="giftDark" aria-hidden="true"></div>
-      <div class="giftScare" aria-hidden="true"><img src="${art.scare}" alt=""></div>
+      <div class="giftScare giftScareGirl" aria-hidden="true"><img src="${art.scare}" alt=""></div>
+      <div class="giftScare giftScareCat" aria-hidden="true"><img src="${art.peek}" alt=""></div>
       <div class="giftAfter">
         <p class="eyebrow">GOTCHA.</p>
         <h2>Happy birthday, Rudy!</h2>
@@ -177,11 +178,104 @@
       scream();
       navigator.vibrate?.([300, 60, 400]);
     }, 2900);
-    later(() => stage.classList.remove('is-shaking'), 4700);
+    later(() => stage.classList.remove('is-shaking'), 4500);
+    // "Phew, it's over"… then the cat.
+    later(() => stage.classList.add('is-calm'), 4700);
+    later(() => {
+      if (!running) return;
+      stage.classList.add('is-scary2');
+      if (!reducedMotion()) stage.classList.add('is-shaking');
+      catScream();
+      navigator.vibrate?.([200, 50, 500]);
+    }, 6200);
+    later(() => stage.classList.remove('is-shaking'), 7900);
     later(() => {
       stage.classList.add('is-after');
       stage.querySelector('.giftAfter .primary')?.focus({ preventScroll: true });
-    }, 5600);
+    }, 8700);
+  }
+
+  // A synthesized cat hiss + yowl, with a boom.
+  function catScream() {
+    if (!ctx) return;
+    try {
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      const t = ctx.currentTime + 0.02;
+      const out = ctx.createGain();
+      out.gain.value = 0.95;
+      const comp = ctx.createDynamicsCompressor();
+      comp.threshold.value = -10;
+      comp.ratio.value = 6;
+      comp.connect(out);
+      out.connect(ctx.destination);
+      const track = (node) => { screamNodes.push(node); return node; };
+
+      // Hiss: bright noise burst
+      const len = Math.floor(ctx.sampleRate * 2.4);
+      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      const hiss = track(ctx.createBufferSource());
+      hiss.buffer = buf;
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 3500;
+      const hg = ctx.createGain();
+      hg.gain.setValueAtTime(1.1, t);
+      hg.gain.exponentialRampToValueAtTime(0.25, t + 0.5);
+      hg.gain.exponentialRampToValueAtTime(0.001, t + 2.2);
+      hiss.connect(hp); hp.connect(hg); hg.connect(comp);
+      hiss.start(t);
+
+      // Yowl: "mee-OWWW" through two vowel-ish formants
+      const vib = track(ctx.createOscillator());
+      vib.frequency.value = 9;
+      const vibGain = ctx.createGain();
+      vibGain.gain.value = 45;
+      vib.connect(vibGain);
+      const yowl = ctx.createGain();
+      yowl.gain.setValueAtTime(0, t);
+      yowl.gain.linearRampToValueAtTime(0.9, t + 0.12);
+      yowl.gain.setValueAtTime(0.9, t + 1.3);
+      yowl.gain.exponentialRampToValueAtTime(0.001, t + 2.3);
+      [[900, 6], [2400, 8]].forEach(([f, q]) => {
+        const bp = ctx.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.setValueAtTime(f * 0.7, t);
+        bp.frequency.linearRampToValueAtTime(f * 1.2, t + 0.5);
+        bp.frequency.linearRampToValueAtTime(f * 0.8, t + 2);
+        bp.Q.value = q;
+        yowl.connect(bp);
+        bp.connect(comp);
+      });
+      [1, 1.01, 2.003].forEach((ratio) => {
+        const osc = track(ctx.createOscillator());
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(480 * ratio, t);
+        osc.frequency.exponentialRampToValueAtTime(1250 * ratio, t + 0.35);
+        osc.frequency.exponentialRampToValueAtTime(820 * ratio, t + 1.4);
+        osc.frequency.exponentialRampToValueAtTime(380 * ratio, t + 2.3);
+        vibGain.connect(osc.frequency);
+        osc.connect(yowl);
+        osc.start(t);
+        osc.stop(t + 2.4);
+      });
+      vib.start(t);
+      vib.stop(t + 2.4);
+
+      // Boom
+      const boom = track(ctx.createOscillator());
+      boom.frequency.setValueAtTime(80, t);
+      boom.frequency.exponentialRampToValueAtTime(25, t + 1);
+      const bg = ctx.createGain();
+      bg.gain.setValueAtTime(1, t);
+      bg.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+      boom.connect(bg); bg.connect(comp);
+      boom.start(t);
+      boom.stop(t + 1.3);
+    } catch {
+      // Sound is optional.
+    }
   }
 
   // A synthesized screech: detuned sawtooth "voice" with wobble, a noise blast and a low boom.

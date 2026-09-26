@@ -1360,9 +1360,13 @@ body.giftOpen { overflow: hidden; }
   background: radial-gradient(ellipse at center, #3a0000 0%, #000 70%); opacity: 0; pointer-events: none;
 }
 .giftScare img { width: auto; height: 100vh; max-width: none; image-rendering: pixelated; transform: scale(.4); }
-.giftOverlay.is-scary .giftScare { opacity: 1; }
-.giftOverlay.is-scary .giftScare img { animation: giftLunge .22s cubic-bezier(.2, 1.6, .4, 1) forwards; }
-.giftOverlay.is-scary .giftScare::after {
+.giftOverlay.is-scary .giftScareGirl { opacity: 1; }
+.giftOverlay.is-scary .giftScareGirl img { animation: giftLunge .22s cubic-bezier(.2, 1.6, .4, 1) forwards; }
+.giftOverlay.is-calm .giftScareGirl { opacity: 0; transition: opacity .35s; }
+.giftOverlay.is-scary2 .giftScareCat { opacity: 1; }
+.giftOverlay.is-scary2 .giftScareCat img { animation: giftLunge .18s cubic-bezier(.2, 1.8, .4, 1) forwards; }
+.giftOverlay.is-scary2 .giftScareCat::after,
+.giftOverlay.is-scary .giftScareGirl::after {
   content: ''; position: absolute; inset: 0; background: #fff; animation: giftStrobe .5s steps(1) forwards;
 }
 @keyframes giftLunge { to { transform: scale(1.35); } }
@@ -1383,7 +1387,7 @@ body.giftOpen { overflow: hidden; }
 .giftAfter h2 { margin: 6px 0 8px; }
 .giftAfter .lead { margin: 0 0 16px; }
 .giftOverlay.is-after .giftAfter { opacity: 1; transform: none; pointer-events: auto; }
-.giftOverlay.is-after .giftScare img { animation: none; transform: scale(1.35); filter: brightness(.55); transition: filter .6s; }
+.giftOverlay.is-after .giftScareCat img { animation: none; transform: scale(1.35); filter: brightness(.55); transition: filter .6s; }
 .giftOverlay.is-after .giftSkip { opacity: 1; }
 
 @media (max-width: 640px), (max-aspect-ratio: 1/1) {
