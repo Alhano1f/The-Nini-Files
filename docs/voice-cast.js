@@ -238,7 +238,7 @@
 
   function localClip(line, profile) {
     const file = window.NiniVoiceManifest?.[`${profile.id}|${line.text}`];
-    return file ? new URL(`voices/${file}?v=3`, document.baseURI).href : null;
+    return file ? new URL(`voices/${file}?v=4`, document.baseURI).href : null;
   }
 
   async function speakLocal(src, profile, ticket) {
