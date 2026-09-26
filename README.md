@@ -6,7 +6,7 @@ A playable pixel-art courtroom mystery. Investigate a missing silver box, questi
 
 **https://alhano1f.github.io/The-Nini-Files/**
 
-Works on desktop and phones. Optional character voices use your browser’s built-in speech (free, no account needed), so they sound a little different on each device.
+Works on desktop and phones. Optional character voices use [Puter.js](https://puter.com) AI text-to-speech (visitors may be asked to sign in to Puter). If Puter is unavailable, the browser’s built-in voices take over automatically.
 
 ## Project layout
 
