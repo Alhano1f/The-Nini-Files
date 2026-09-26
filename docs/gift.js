@@ -54,7 +54,6 @@
         <img class="giftGirl" src="${art.girlFront}" alt="">
         <img class="giftCat" src="${art.cat1}" alt="">
       </div>
-      <img class="giftPeek" src="${art.peek}" alt="" aria-hidden="true">
       <div class="giftDark" aria-hidden="true"></div>
       <div class="giftScare giftScareGirl" aria-hidden="true"><img src="${art.scare}" alt=""></div>
       <div class="giftScare giftScareCat" aria-hidden="true"><img src="${art.peek}" alt=""></div>
@@ -121,7 +120,6 @@
   function dance() {
     const girl = overlay.querySelector('.giftGirl');
     const cat = overlay.querySelector('.giftCat');
-    const peek = overlay.querySelector('.giftPeek');
     const lights = overlay.querySelector('.giftLights');
     const calm = reducedMotion();
     const started = performance.now();
@@ -156,9 +154,6 @@
       girl.style.transform = `translateY(${-bounce * amp}px) rotate(${sway}deg) scaleX(${flip})`;
       cat.style.transform = `translateY(${-bounce * amp * 0.8}px) rotate(${-sway * 1.4}deg)`;
 
-      // Nini peeks in from the corner twice during the song.
-      const peeking = (t > 11 && t < 16) || (t > 26 && t < 31);
-      peek.classList.toggle('is-peeking', peeking);
 
       raf = requestAnimationFrame(frame);
     }
