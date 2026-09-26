@@ -5,14 +5,18 @@
   const BEAT = 0.5; // the song is ~120 BPM
   const SONG_FALLBACK_SECONDS = 36.8;
   const art = {
-    stage: 'gift-stage.webp',
-    girlFront: 'gift-girl-front.webp',
-    girlSide: 'gift-girl-side.webp',
-    cat1: 'gift-cat-1.webp',
-    cat2: 'gift-cat-2.webp',
+    cake: 'dance-cake.webp',
+    cats: ['dance-cat-1.webp', 'dance-cat-2.webp', 'dance-cat-3.webp', 'dance-cat-4.webp', 'dance-cat-5.webp', 'dance-cat-6.webp'],
     peek: 'gift-cat-peek.webp',
     scare: 'gift-scare.webp',
   };
+  // Each dancer swaps between two poses on every half beat.
+  const POSE_PAIRS = [[0, 4], [1, 5], [2, 3], [4, 0], [3, 2], [5, 1], [0, 2], [3, 5]];
+  // Two rings of cats circling the cake in opposite directions.
+  const RINGS = [
+    { count: 12, rx: 0.34, ry: 0.13, speed: 0.22, size: 1 },
+    { count: 16, rx: 0.44, ry: 0.19, speed: -0.14, size: 0.85 },
+  ];
 
   let overlay;
   let audio;
@@ -28,7 +32,7 @@
   function preload() {
     if (preloaded) return;
     preloaded = true;
-    Object.values(art).forEach((src) => { const img = new Image(); img.src = src; });
+    [art.cake, ...art.cats, art.peek, art.scare].forEach((src) => { const img = new Image(); img.src = src; });
     const a = new Audio();
     a.preload = 'auto';
     a.src = 'gift-song.mp3';
@@ -45,14 +49,13 @@
     overlay.className = 'giftOverlay';
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', 'The special gift: a birthday dance');
+    overlay.setAttribute('aria-label', 'The special gift: cats dancing around the birthday cake');
     overlay.innerHTML = `
-      <div class="giftStage" style="background-image:url('${art.stage}')"></div>
+      <div class="giftStage giftParty" aria-hidden="true"></div>
       <div class="giftLights" aria-hidden="true"></div>
       <p class="giftTitle">THE SPECIAL GIFT<br><span>from the cats</span></p>
-      <div class="giftDancers" aria-hidden="true">
-        <img class="giftGirl" src="${art.girlFront}" alt="">
-        <img class="giftCat" src="${art.cat1}" alt="">
+      <div class="giftDancers giftRing" aria-hidden="true">
+        <img class="giftCake" src="${art.cake}" alt="">
       </div>
       <div class="giftDark" aria-hidden="true"></div>
       <div class="giftScare giftScareGirl" aria-hidden="true"><img src="${art.scare}" alt=""></div>
@@ -118,13 +121,25 @@
   }
 
   function dance() {
-    const girl = overlay.querySelector('.giftGirl');
-    const cat = overlay.querySelector('.giftCat');
+    const ring = overlay.querySelector('.giftRing');
+    const cake = overlay.querySelector('.giftCake');
     const lights = overlay.querySelector('.giftLights');
     const calm = reducedMotion();
+    const cats = [];
+    let n = 0;
+    RINGS.forEach((r, ri) => {
+      for (let i = 0; i < r.count; i++, n++) {
+        const img = document.createElement('img');
+        img.className = 'giftDanceCat';
+        img.alt = '';
+        const pair = POSE_PAIRS[n % POSE_PAIRS.length];
+        img.src = art.cats[pair[0]];
+        ring.appendChild(img);
+        cats.push({ img, ring: r, ri, base: (i / r.count) * Math.PI * 2 + ri * 0.2, pair, off: n % 2, flip: n % 3 === 0 ? -1 : 1, pose: -1 });
+      }
+    });
     const started = performance.now();
     let lastBeat = -1;
-    let lastHalf = -1;
 
     function frame(now) {
       if (!running || overlay.classList.contains('is-scary')) return;
@@ -132,28 +147,44 @@
       const beat = Math.floor(t / BEAT);
       const half = Math.floor(t / (BEAT / 2));
       const phase = (t % BEAT) / BEAT;
-      const bounce = Math.abs(Math.sin(Math.PI * phase));
       const bar = Math.floor(beat / 4);
+      const W = ring.clientWidth;
+      const H = ring.clientHeight;
+      const tall = H > W;
+      const cx = W / 2;
+      const cy = H * (tall ? 0.6 : 0.68);
+      const unit = Math.min(H * 0.3, W * (tall ? 0.24 : 0.16), 260);
 
       if (beat !== lastBeat) {
         lastBeat = beat;
-        // Girl steps: front, side, front, side (mirrored every other bar).
-        girl.src = beat % 2 ? art.girlSide : art.girlFront;
-        girl.dataset.flip = beat % 2 && bar % 2 ? '1' : '0';
         lights.style.setProperty('--hue', String((beat * 47) % 360));
         lights.classList.toggle('flash', beat % 2 === 0);
       }
-      if (half !== lastHalf) {
-        lastHalf = half;
-        cat.src = half % 2 ? art.cat2 : art.cat1;
-      }
 
-      const amp = calm ? 4 : 26;
-      const sway = calm ? 0 : Math.sin((Math.PI * t) / (BEAT * 2)) * 6;
-      const flip = girl.dataset.flip === '1' ? -1 : 1;
-      girl.style.transform = `translateY(${-bounce * amp}px) rotate(${sway}deg) scaleX(${flip})`;
-      cat.style.transform = `translateY(${-bounce * amp * 0.8}px) rotate(${-sway * 1.4}deg)`;
+      const cakeH = Math.min(H * 0.46, W * (tall ? 0.62 : 0.34), 440);
+      const pulse = calm ? 1 : 1 + Math.abs(Math.sin(Math.PI * phase)) * 0.03;
+      cake.style.height = `${cakeH}px`;
+      cake.style.transform = `translate(-50%, -100%) translate(${cx}px, ${cy + cakeH * 0.18}px) scale(${pulse})`;
 
+      cats.forEach((c, k) => {
+        const angle = c.base + (calm ? 0 : t * c.ring.speed * Math.PI);
+        const depth = Math.sin(angle); // -1 = behind the cake, 1 = in front
+        const rx = W * (tall ? c.ring.rx * 1.05 : c.ring.rx);
+        const ry = H * c.ring.ry;
+        const x = cx + Math.cos(angle) * rx;
+        const y = cy + depth * ry;
+        const scale = c.ring.size * (0.62 + 0.38 * (depth + 1) / 2);
+        const localPhase = ((t + c.off * BEAT / 2) % BEAT) / BEAT;
+        const hop = Math.abs(Math.sin(Math.PI * localPhase)) * (calm ? 3 : 22) * scale;
+        const sway = calm ? 0 : Math.sin((Math.PI * t) / (BEAT * 2) + k) * 7;
+        const pose = (half + c.off) % 2;
+        if (pose !== c.pose) { c.pose = pose; c.img.src = art.cats[c.pair[pose]]; }
+        const flip = c.flip * (bar % 2 && k % 2 ? -1 : 1);
+        c.img.style.height = `${unit * scale}px`;
+        c.img.style.zIndex = String(Math.round(depth * 100) + 200);
+        c.img.style.filter = `brightness(${0.55 + 0.45 * (depth + 1) / 2}) drop-shadow(0 8px 8px #000a)`;
+        c.img.style.transform = `translate(-50%, -100%) translate(${x}px, ${y - hop}px) rotate(${sway}deg) scaleX(${flip})`;
+      });
 
       raf = requestAnimationFrame(frame);
     }
