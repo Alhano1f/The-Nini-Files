@@ -942,9 +942,12 @@ function renderEnding() {
     <h1>The treasure was<br><em>your birthday cake.</em></h1>
     <p class="lead">Happy birthday, Rudy! We lied about the theft. We exaggerated the danger. We even put a cat on the witness stand.</p>
     <p class="lead">But this part is true: you’re loved. And we would stage an entire courtroom drama just to make you smile.</p>
-    <p class="signatures">With love, Alhanouf<br>With highly questionable testimony, the old lady, the old man &amp; Gojo<br>With full executive approval, Nini</p>
+    <p class="signatures">With love, Alhanouf, Munirah, Hadeel &amp; Norah<br>With highly questionable testimony, the old lady, the old man &amp; Gojo<br>With full executive approval, Nini</p>
     <p class="fine">Nini has been cleared of all charges. Except being the real boss.</p>
-    <button class="primary" type="button" data-action="restart" data-testid="button-play-again">Play again</button>
+    <div class="endingActions">
+      <button class="quiet" type="button" data-action="birthday-song" data-testid="button-birthday-song">♪ Play the birthday song</button>
+      <button class="primary" type="button" data-action="restart" data-testid="button-play-again">Play again</button>
+    </div>
   </section>`;
 }
 
@@ -1616,8 +1619,15 @@ function handleAction(actionName) {
       shout('SURPRISE!');
       render();
       scrollToTop();
+      window.NiniCelebrate?.confetti();
+      if (soundOn || voiceOn) setTimeout(() => window.NiniCelebrate?.song(), 900);
+      break;
+    case 'birthday-song':
+      window.NiniCelebrate?.song();
+      window.NiniCelebrate?.confetti();
       break;
     case 'restart':
+      window.NiniCelebrate?.stopSong();
       resetGame();
       break;
     default:
